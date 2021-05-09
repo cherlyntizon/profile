@@ -1,9 +1,42 @@
 import { Injectable } from '@angular/core';
+import { AngularFireDatabase, AngularFireList, AngularFireObject } from '@angular/fire/database';
+import { ConvertActionBindingResult } from '@angular/compiler/src/compiler_util/expression_converter';
+import { Contact } from './contact';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContactServiceService {
 
-  constructor() { }
+export class ContactServiceService {
+  contactListRef: AngularFireList<any>;
+  contactRef: AngularFireObject<any>;
+  aptService: any;
+
+  constructor(private db: AngularFireDatabase) { }
+
+  // Create
+  createContact(cont: Contact) {
+    return this.contactListRef.push({
+      name: cont.name,
+      mobile: cont.mobile
+    })
+  }
+
+  // Get Single
+  getContact(id: string) {
+    this.contactRef = this.db.object('/contact/' + id);
+    return this.contactRef;
+  }
+
+  // Get List
+  getContactList() {
+    this.contactListRef = this.db.list('/contact');
+    return this.contactListRef;
+  }
+
+  // Delete
+  deleteContact(id: string) {
+    this.contactRef = this.db.object('/contact/' + id);
+    this.contactRef.remove();
+  }
 }
